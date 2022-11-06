@@ -64,7 +64,7 @@ class Checker:
 
         self._judges = [j for j in self._judges if j.is_working]
         log.debug(
-            '%d judges added. Runtime: %.4f;' % (len(self._judges), time.time() - stime)
+            '%d judges added. Runtime: %.4f;', len(self._judges), time.time() - stime
         )
 
         nojudges = []
@@ -95,14 +95,12 @@ class Checker:
 
         if nojudges:
             warnings.warn(
-                'Not found judges for the {nojudges} protocol.\n'
-                'Checking proxy on protocols {disp} is disabled.'.format(
-                    nojudges=nojudges, disp=disable_protocols
-                ),
+                f'Not found judges for the {nojudges} protocol.\n'
+                f'Checking proxy on protocols {disable_protocols} is disabled.',
                 UserWarning,
             )
         if self._judges:
-            log.debug('Loaded: %d proxy judges' % len(set(self._judges)))
+            log.debug('Loaded: %d proxy judges', len(set(self._judges)))
         else:
             RuntimeError('Not found judges')
 
@@ -167,7 +165,7 @@ class Checker:
 
     async def _check_conn_25(self, proxy, proto):
         judge = Judge.get_random(proto)
-        proxy.log('Selected judge: %s' % judge)
+        proxy.log('Selected judge: %s', judge)
         result = False
         for attempt in range(self._max_tries):
             try:
@@ -195,7 +193,7 @@ class Checker:
 
     async def _check(self, proxy, proto):
         judge = Judge.get_random(proto)
-        proxy.log('Selected judge: %s' % judge)
+        proxy.log('Selected judge: %s', judge)
         result = False
         for attempt in range(self._max_tries):
             try:
@@ -270,16 +268,15 @@ async def _send_test_request(method, proxy, judge):
         err = BadResponseError
         raise err
     finally:
-        proxy.log('Get: %s' % ('success' if content else 'failed'), err=err)
+        proxy.log('Get: %s', ('success' if content else 'failed'), err=err)
         log.debug(
-            '{h}:{p} [{n}]: ({j}) rv: {rv}, response: {resp}'.format(
-                h=proxy.host,
-                p=proxy.port,
-                n=proxy.ngtr.name,
-                j=judge.url,
-                rv=rv,
-                resp=resp,
-            )
+            '%s:%s [%s]: (%s) rv: %s, response: %s',
+            proxy.host,
+            proxy.port,
+            proxy.ngtr.name,
+            judge.url,
+            rv,
+            resp,
         )
     return headers, content, rv
 
@@ -303,37 +300,37 @@ def _decompress_content(headers, content):
 
 
 def _check_test_response(proxy, headers, content, rv):
-    verIsCorrect = rv in content
-    refSupported = get_headers()['Referer'] in content
-    cookieSupported = get_headers()['Cookie'] in content
-    foundIP = get_all_ip(content)
+    ver_is_correct = rv in content
+    ref_supported = get_headers()['Referer'] in content
+    cookie_supported = get_headers()['Cookie'] in content
+    found_ip = get_all_ip(content)
 
-    if all([verIsCorrect, foundIP, refSupported, cookieSupported]):
+    if all([ver_is_correct, found_ip, ref_supported, cookie_supported]):
         proxy.log('Response: correct')
         return True
     else:
         proxy.log(
-            'Response: not correct; ip: %s, rv: %s, ref: %s, cookie: %s'
-            % (bool(foundIP), verIsCorrect, refSupported, cookieSupported)
+            'Response: not correct; ip: %s, rv: %s, ref: %s, cookie: %s',
+            bool(found_ip), ver_is_correct, ref_supported, cookie_supported
         )
         return False
 
 
 def _get_anonymity_lvl(real_ext_ip, proxy, judge, content):
     content = content.lower()
-    foundIP = get_all_ip(content)
+    found_ip = get_all_ip(content)
 
     via = (content.count('via') > judge.marks['via']) or (
         content.count('proxy') > judge.marks['proxy']
     )
 
-    if real_ext_ip in foundIP:
+    if real_ext_ip in found_ip:
         lvl = 'Transparent'
     elif via:
         lvl = 'Anonymous'
     else:
         lvl = 'High'
-    proxy.log('A: {lvl}; {ip}; via(p): {via}'.format(lvl=lvl[:4], ip=foundIP, via=via))
+    proxy.log(f'A: {lvl[:4]}; {found_ip}; via(p): {via}')
     return lvl
 
 

@@ -72,7 +72,7 @@ class Provider:
 
         :return: :attr:`.proxies`
         """
-        log.debug('Try to get proxies from %s' % self.domain)
+        log.debug('Try to get proxies from %s', self.domain)
 
         async with aiohttp.ClientSession(
             headers=get_headers(), cookies=self._cookies, loop=self._loop
@@ -80,8 +80,7 @@ class Provider:
             await self._pipe()
 
         log.debug(
-            '%d proxies received from %s: %s'
-            % (len(self.proxies), self.domain, self.proxies)
+            '%d proxies received from %s: %s', len(self.proxies), self.domain, self.proxies
         )
         return self.proxies
 
@@ -106,16 +105,16 @@ class Provider:
         oldcount = len(self.proxies)
         try:
             received = self.find_proxies(page)
-        except Exception as e:
+        except Exception as error:
             received = []
             log.error(
                 'Error when executing find_proxies.'
-                'Domain: %s; Error: %r' % (self.domain, e)
+                'Domain: %s; Error: %r', self.domain, error
             )
         self.proxies = received
         added = len(self.proxies) - oldcount
         log.debug(
-            '%d(%d) proxies added(received) from %s' % (added, len(received), url)
+            '%d(%d) proxies added(received) from %s', added, len(received), url
         )
 
     async def get(self, url, data=None, headers=None, method='GET'):
@@ -135,10 +134,10 @@ class Provider:
                 page = await resp.text()
                 if resp.status != 200:
                     log.debug(
-                        'url: %s\nheaders: %s\ncookies: %s\npage:\n%s'
-                        % (url, resp.headers, resp.cookies, page)
+                        'url: %s\nheaders: %s\ncookies: %s\npage:\n%s',
+                        url, resp.headers, resp.cookies, page
                     )
-                    raise BadStatusError('Status: %s' % resp.status)
+                    raise BadStatusError('Status: %s', resp.status)
         except (
             UnicodeDecodeError,
             BadStatusError,
@@ -146,9 +145,9 @@ class Provider:
             aiohttp.ClientOSError,
             aiohttp.ClientResponseError,
             aiohttp.ServerDisconnectedError,
-        ) as e:
+        ) as error:
             page = ''
-            log.debug('%s is failed. Error: %r;' % (url, e))
+            log.debug('%s is failed. Error: %r;', url, error)
         return page
 
     def find_proxies(self, page):

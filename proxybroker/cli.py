@@ -154,7 +154,7 @@ def add_broker_args(group):
         '--version',
         '-v',
         action='version',
-        version='%(prog)s {v}'.format(v=version),
+        version=f'%(prog)s {version}',
         help='Show program\'s version number and exit',
     )
 
@@ -352,11 +352,11 @@ async def handle(proxies, outfile, format):
                 break
 
             if is_json:
-                line = '%s' % json.dumps(proxy.as_json())
+                line = '%s', json.dumps(proxy.as_json())
             elif is_txt:
                 line = proxy.as_text()
             else:
-                line = '%r\n' % proxy
+                line = '%r\n', proxy
 
             if is_json and not is_first:
                 outfile.write(',\n')
@@ -436,7 +436,7 @@ def cli(args=sys.argv[1:]):
             strict=ns.strict,
             dnsbl=ns.dnsbl,
         )
-        print('Server started at http://%s:%d' % (ns.host, ns.port))
+        print('Server started at http://%s:%d', ns.host, ns.port)
 
     try:
         if tasks:

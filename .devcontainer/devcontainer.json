@@ -1,6 +1,6 @@
 {
 	"name": "Python 3",
-	"image": "mcr.microsoft.com/devcontainers/python:3.10-bullseye",
+	"image": "mcr.microsoft.com/devcontainers/python:3.11-bullseye",
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "none"
@@ -20,7 +20,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.python"
+				"ms-python.python",
+				"ms-python.isort",
+				"ms-python.vscode-pylance"
 			]
 		}
 	}

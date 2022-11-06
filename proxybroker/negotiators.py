@@ -118,7 +118,7 @@ class Connect80Ngtr(BaseNegotiator):
         code = get_status_code(resp)
         if code != 200:
             self._proxy.log(
-                'Connect: failed. HTTP status: %s' % code, err=BadStatusError
+                'Connect: failed. HTTP status: %s', code, err=BadStatusError
             )
             raise BadStatusError
 
@@ -134,14 +134,14 @@ class Connect25Ngtr(BaseNegotiator):
         code = get_status_code(resp)
         if code != 200:
             self._proxy.log(
-                'Connect: failed. HTTP status: %s' % code, err=BadStatusError
+                'Connect: failed. HTTP status: %s', code, err=BadStatusError
             )
             raise BadStatusError
 
         resp = await self._proxy.recv(length=3)
         code = get_status_code(resp, start=0, stop=3)
         if code != SMTP_READY:
-            self._proxy.log('Failed (invalid data): %s' % code, err=BadStatusError)
+            self._proxy.log('Failed (invalid data): %s', code, err=BadStatusError)
             raise BadStatusError
 
 
@@ -156,7 +156,7 @@ class HttpsNgtr(BaseNegotiator):
         code = get_status_code(resp)
         if code != 200:
             self._proxy.log(
-                'Connect: failed. HTTP status: %s' % code, err=BadStatusError
+                'Connect: failed. HTTP status: %s', code, err=BadStatusError
             )
             raise BadStatusError
         await self._proxy.connect(ssl=True)

@@ -173,7 +173,7 @@ class Broker:
             Added: :attr:`post`, :attr:`strict`, :attr:`dnsbl`.
             Changed: :attr:`types` is required.
         """
-        ip = await self._resolver.get_real_ext_ip()
+        real_ext_pip = await self._resolver.get_real_ext_ip()
         types = _update_types(types)
 
         if not types:
@@ -184,7 +184,7 @@ class Broker:
             timeout=self._timeout,
             verify_ssl=self._verify_ssl,
             max_tries=self._max_tries,
-            real_ext_ip=ip,
+            real_ext_ip=real_ext_pip,
             types=types,
             post=post,
             strict=strict,
@@ -338,7 +338,7 @@ class Broker:
                         await self._handle(proxy, check=check)
             log.debug('Grab cycle is complete')
             if self._server:
-                log.debug('fall asleep for %d seconds' % GRAB_PAUSE)
+                log.debug('fall asleep for %d seconds', GRAB_PAUSE)
                 await asyncio.sleep(GRAB_PAUSE)
                 log.debug('awaked')
             else:
@@ -394,10 +394,9 @@ class Broker:
 
         if self._server and not self._proxies.empty() and self._limit <= 0:
             log.debug(
-                'pause. proxies: %s; limit: %s' % (self._proxies.qsize(), self._limit)
-            )
+                'pause. proxies: %s; limit: %s', self._proxies.qsize(), self._limit)
             await self._proxies.join()
-            log.debug('unpause. proxies: %s' % self._proxies.qsize())
+            log.debug('unpause. proxies: %s', self._proxies.qsize())
 
         await self._on_check.put(None)
         task = asyncio.ensure_future(self._checker.check(proxy))
@@ -405,7 +404,7 @@ class Broker:
         self._all_tasks.append(task)
 
     def _push_to_result(self, proxy):
-        log.debug('push to result: %r' % proxy)
+        log.debug('push to result: %r', proxy)
         self._proxies.put_nowait(proxy)
         self._update_limit()
 
@@ -429,7 +428,7 @@ class Broker:
             if not task.done():
                 task.cancel()
         self._push_to_result(None)
-        log.info('Done! Total found proxies: %d' % len(self.unique_proxies))
+        log.info('Done! Total found proxies: %d', len(self.unique_proxies))
 
     def show_stats(self, verbose=False, **kwargs):
         """Show statistics on the found proxies.
@@ -495,13 +494,13 @@ class Broker:
                 for ngtr, events in sorted(
                     events_by_ngtr.items(), key=lambda item: item[0]
                 ):
-                    full_log.append('\t%s' % ngtr)
+                    full_log.append(f'\t{ngtr}')
                     for event, runtime in events:
                         if event.startswith('Initial connection'):
                             full_log.append('\t\t-------------------')
                         else:
                             full_log.append(
-                                '\t\t{:<66} Runtime: {:.2f}'.format(event, runtime)
+                                f'\t\t{event:<66} Runtime: {runtime:.2f}'
                             )
                 for row in full_log:
                     print(row)
@@ -513,9 +512,9 @@ class Broker:
             print('Stats:')
             pprint(stat)
 
-        print('The number of working proxies: %d' % num_working_proxies)
+        print(f'The number of working proxies: {num_working_proxies}')
         for proto, proxies in proxies_by_type.items():
-            print('%s (%s): %s' % (proto, len(proxies), proxies))
+            print(f'{proto} ({len(proxies)}): {proxies}')
         print('Errors:', errors)
 
 
