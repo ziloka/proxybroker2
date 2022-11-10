@@ -131,7 +131,7 @@ class Server:
     ):
         self.host = host
         self.port = int(port)
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or asyncio.get_event_loop_policy().get_event_loop()
         self._timeout = timeout
         self._max_tries = max_tries
         self._backlog = backlog
@@ -145,16 +145,19 @@ class Server:
         self._resolver = Resolver(loop=self._loop)
         self._http_allowed_codes = http_allowed_codes or []
 
-    def start(self):
+    async def start(self):
 
-        srv = asyncio.start_server(
+        srv = await asyncio.start_server(
             self._accept,
             host=self.host,
             port=self.port,
-            backlog=self._backlog,
-            loop=self._loop,
+            backlog=self._backlog
         )
-        self._server = self._loop.run_until_complete(srv)
+
+        # self._server = self._loop.run_until_complete(srv)
+
+        async with srv:
+          await srv.serve_forever()
 
         log.info(
             'Listening established on {0}'.format(self._server.sockets[0].getsockname())

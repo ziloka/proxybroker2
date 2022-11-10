@@ -35,16 +35,14 @@ async def get_pages(urls, proxy_url):
 def main():
     host, port = '127.0.0.1', 8888  # by default
 
-    loop = asyncio.get_event_loop()
-
     types = [('HTTP', 'High'), 'HTTPS', 'CONNECT:80']
     codes = [200, 301, 302]
 
-    broker = Broker(max_tries=1, loop=loop)
+    broker = Broker(max_tries=1)
 
     # Broker.serve() also supports all arguments that are accepted
     # Broker.find() method: data, countries, post, strict, dnsbl.
-    broker.serve(
+    asyncio.run(broker.serve(
         host=host,
         port=port,
         types=types,
@@ -56,7 +54,7 @@ def main():
         max_resp_time=8,
         http_allowed_codes=codes,
         backlog=100,
-    )
+    ))
 
     urls = [
         'http://httpbin.org/get',
@@ -66,7 +64,7 @@ def main():
     ]
 
     proxy_url = 'http://%s:%d' % (host, port)
-    loop.run_until_complete(get_pages(urls, proxy_url))
+    # asyncio.get_running_loop().run_until_complete(get_pages(urls, proxy_url))
 
     broker.stop()
 

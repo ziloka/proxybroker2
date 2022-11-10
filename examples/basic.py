@@ -4,18 +4,24 @@ import asyncio
 
 from proxybroker import Broker
 
-
 async def show(proxies):
     while True:
         proxy = await proxies.get()
         if proxy is None:
             break
-        print('Found proxy: %s' % proxy)
+        print(f'Found proxy: {proxy}')
 
 
-proxies = asyncio.Queue()
-broker = Broker(proxies)
-tasks = asyncio.gather(broker.find(types=['HTTP', 'HTTPS'], limit=10), show(proxies))
+async def main():
+    proxies = asyncio.Queue()
+    broker = Broker(proxies, loop=asyncio.get_running_loop())
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(tasks)
+    await asyncio.gather(broker.find(types=['HTTP', 'HTTPS'], limit=10), show(proxies))
+
+if __name__ == '__main__':
+    try:
+      loop = asyncio.get_event_loop_policy().get_event_loop()
+      asyncio.set_event_loop(loop)
+      loop.run_until_complete(main())
+    except KeyboardInterrupt:
+      exit()

@@ -35,7 +35,7 @@ def main():
         broker.find(types=['CONNECT:25'], dnsbl=dnsbl, limit=10),
         save(proxies, filename='proxies.txt'),
     )
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_event_loop_policy().get_event_loop()
     loop.run_until_complete(tasks)
 
 

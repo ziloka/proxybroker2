@@ -33,7 +33,7 @@ async def get_pages(urls, proxy_url):
 def main():
     host, port = '127.0.0.1', 8888  # by default
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_event_loop_policy().get_event_loop()
 
     # types = [('HTTP', 'High'), 'HTTPS', 'CONNECT:80']
     # codes = [200, 301, 302]

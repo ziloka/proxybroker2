@@ -202,7 +202,7 @@ class Broker:
         tasks.append(task)
         self._all_tasks.extend(tasks)
 
-    def serve(self, host='127.0.0.1', port=8888, limit=100, **kwargs):
+    async def serve(self, host='127.0.0.1', port=8888, limit=100, **kwargs):
         """Start a local proxy server.
 
         The server distributes incoming requests to a pool of found proxies.
@@ -289,10 +289,9 @@ class Broker:
             proxies=self._proxies,
             timeout=self._timeout,
             max_tries=kwargs.pop('max_tries', self._max_tries),
-            loop=self._loop,
             **kwargs,
         )
-        self._server.start()
+        await self._server.start()
 
         task = asyncio.ensure_future(self.find(limit=limit, **kwargs))
         self._all_tasks.append(task)

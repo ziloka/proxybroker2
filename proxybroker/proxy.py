@@ -335,7 +335,7 @@ class Proxy:
             self.writer.close()
             # except RuntimeError:
             #     print('Try proxy.close() when loop is closed:',
-            #           asyncio.get_event_loop()._closed)
+            #           asyncio.get_event_loop_policy().get_event_loop()._closed)
         self._reader = {'conn': None, 'ssl': None}
         self._writer = {'conn': None, 'ssl': None}
         self.log('Connection: closed')

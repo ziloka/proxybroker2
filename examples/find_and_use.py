@@ -46,8 +46,8 @@ async def get_pages(urls, proxy_pool, timeout=10, loop=None):
         print('%s\nDone!\nURL: %s;\nContent: %s' % ('-' * 20, url, content))
 
 
-def main():
-    loop = asyncio.get_event_loop()
+async def main():
+    loop = asyncio.get_event_loop_policy().get_event_loop()
 
     proxies = asyncio.Queue()
     proxy_pool = ProxyPool(proxies)
@@ -71,7 +71,7 @@ def main():
         verify_ssl=False,
         judges=judges,
         providers=providers,
-        loop=loop,
+        loop=asyncio.get_running_loop(),
     )
 
     types = [('HTTP', ('Anonymous', 'High'))]
@@ -84,14 +84,15 @@ def main():
         'http://httpbin.org/status/404',
     ]
 
-    tasks = asyncio.gather(
+    await asyncio.gather(
         broker.find(types=types, countries=countries, strict=True, limit=10),
         get_pages(urls, proxy_pool, loop=loop),
     )
-    loop.run_until_complete(tasks)
 
     # broker.show_stats(verbose=True)
 
 
 if __name__ == '__main__':
-    main()
+    loop = asyncio.get_event_loop_policy().get_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())

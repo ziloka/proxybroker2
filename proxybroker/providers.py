@@ -45,7 +45,7 @@ class Provider:
         self._proxies = set()
         # concurrent connections on the current provider
         self._sem_provider = asyncio.Semaphore(max_conn)
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop or asyncio.get_event_loop_policy().get_event_loop()
 
     @property
     def proxies(self):

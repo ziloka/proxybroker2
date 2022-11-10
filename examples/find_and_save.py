@@ -13,20 +13,21 @@ async def save(proxies, filename):
             if proxy is None:
                 break
             proto = 'https' if 'HTTPS' in proxy.types else 'http'
-            row = '%s://%s:%d\n' % (proto, proxy.host, proxy.port)
+            row = f'{proto}://{proxy.host}:{proxy.port}\n'
             f.write(row)
 
 
-def main():
+async def main():
     proxies = asyncio.Queue()
     broker = Broker(proxies)
-    tasks = asyncio.gather(
+    await asyncio.gather(
         broker.find(types=['HTTP', 'HTTPS'], limit=10),
         save(proxies, filename='proxies.txt'),
     )
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(tasks)
+
 
 
 if __name__ == '__main__':
-    main()
+    loop = asyncio.get_event_loop_policy().get_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())
