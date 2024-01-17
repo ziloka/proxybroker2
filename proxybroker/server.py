@@ -131,7 +131,7 @@ class Server:
     ):
         self.host = host
         self.port = int(port)
-        self._loop = loop or asyncio.get_event_loop()
+        self._loop = loop
         self._timeout = timeout
         self._max_tries = max_tries
         self._backlog = backlog
