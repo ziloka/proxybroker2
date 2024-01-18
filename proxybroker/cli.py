@@ -388,6 +388,7 @@ def cli(args=sys.argv[1:]):
         ns.types.append(('HTTP', ns.anon_lvl))
 
     loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     proxies = asyncio.Queue()
     broker = Broker(
         proxies,
@@ -443,7 +444,6 @@ def cli(args=sys.argv[1:]):
 
     try:
         if tasks:
-            asyncio.set_event_loop(loop)
             loop.run_until_complete(asyncio.gather(*tasks))
             if ns.show_stats:
                 broker.show_stats(verbose=True)

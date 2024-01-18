@@ -151,8 +151,7 @@ class Server:
             self._accept,
             host=self.host,
             port=self.port,
-            backlog=self._backlog,
-            loop=self._loop,
+            backlog=self._backlog
         )
         self._server = self._loop.run_until_complete(srv)
 
